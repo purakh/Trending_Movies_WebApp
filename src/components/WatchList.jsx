@@ -6,6 +6,7 @@ function WatchList({ watchList, handleRemoveFromWatchList, setWatchList }) {
   const [search, setSearch] = useState("");
   const [genresList, setGenresList] = useState(["All Genres"]);
   const [currentGenre, setCurrentGenre] = useState("All Genres");
+
   let handleSearch = (e) => {
     setSearch(e.target.value);
   };
@@ -16,12 +17,14 @@ function WatchList({ watchList, handleRemoveFromWatchList, setWatchList }) {
     });
     setWatchList([...sortedincreasing]);
   };
+
   let sortDecrease = () => {
     let sortedecreasing = watchList.sort((a, b) => {
       return b.vote_average - a.vote_average;
     });
     setWatchList([...sortedecreasing]);
   };
+
   let handleFilter = (genre) => {
     setCurrentGenre(genre);
   };
@@ -32,86 +35,120 @@ function WatchList({ watchList, handleRemoveFromWatchList, setWatchList }) {
     });
     temp = [...new Set(temp)];
     setGenresList(["All Genres", ...temp]);
-    console.log(genresList);
   }, [watchList]);
 
   return (
     <>
-      <div className="flex justify-center flex-wrap m-4 gap-4">
+      {/* Genre Filter */}
+      <div className="flex justify-center flex-wrap gap-3 p-4">
         {genresList.map((genre) => {
           return (
             <div
+              key={genre}
               onClick={() => handleFilter(genre)}
-              className={
+              className={`px-5 py-2 rounded-full cursor-pointer font-medium 
+              transition duration-300 shadow-sm
+              ${
                 currentGenre === genre
-                  ? "bg-blue-400 flex justify-center items-center h-[3rem] w-[9rem] rounded-xl text-white font-semibold cursor-pointer"
-                  : "bg-blue-400 flex justify-center items-center h-[3rem] w-[9rem] bg-gray-400/50 rounded-xl cursor-pointer font-semibold"
-              }>
+                  ? "bg-blue-500 text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-blue-100"
+              }`}
+            >
               {genre}
             </div>
           );
         })}
       </div>
-      <div className="flex justify-center my-4">
-        <input
-          onChange={handleSearch}
-          value={search}
-          type="text"
-          className="w-1/3 h-[3rem] bg-gray-200 outline-none px-4 text-xl font-semibold"
-          placeholder="Search Movies"
-        />
+
+      {/* Search Bar */}
+      <div className="flex justify-center my-6">
+        <div className="relative w-[90%] md:w-1/3">
+          <input
+            onChange={handleSearch}
+            value={search}
+            type="text"
+            placeholder="Search Movies..."
+            className="w-full p-3 pl-10 rounded-lg border border-gray-300 
+            focus:outline-none focus:ring-2 focus:ring-blue-400 
+            shadow-sm"
+          />
+          <i className="fa fa-search absolute left-3 top-4 text-gray-400"></i>
+        </div>
       </div>
-      <div className="border border-gray-200 m-5 rounded-lg overflow-hidden">
-        <table className="w-full text-gray-500 text-center">
-          <thead className="border-b-3 text-gray-800 bg-gray-200">
+
+      {/* Table */}
+      <div className="m-4 rounded-xl overflow-hidden shadow-lg">
+        <table className="w-full text-gray-600">
+          <thead className="bg-gray-900 text-white">
             <tr>
-              <th className="text-left px-5 py-3">Name</th>
-              <th className="flex gap-3 justify-center">
-                <div onClick={sortIncrease} className="p-2">
-                  <i className="fa fa-arrow-up" />
-                </div>
-                <div className="p-2">Rating</div>
-                <div onClick={sortDecrease} className="p-2">
-                  <i className="fa fa-arrow-down" />
+              <th className="text-left px-6 py-3">Movie</th>
+              <th className="py-3">
+                <div className="flex items-center justify-center gap-2">
+                  <i
+                    onClick={sortIncrease}
+                    className="fa fa-arrow-up cursor-pointer hover:text-blue-400"
+                  />
+                  Rating
+                  <i
+                    onClick={sortDecrease}
+                    className="fa fa-arrow-down cursor-pointer hover:text-blue-400"
+                  />
                 </div>
               </th>
               <th>Popularity</th>
               <th>Genre</th>
+              <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-            {watchList.filter((movie) => {
-              if (currentGenre === "All Genres") {
-                return true;
-              } else {
+
+          <tbody className="bg-white">
+            {watchList
+              .filter((movie) => {
+                if (currentGenre === "All Genres") return true;
                 return genreids[movie.genre_ids[0]] === currentGenre;
-              }
-            }).filter((movie) => {
+              })
+              .filter((movie) => {
                 return (
                   movie.original_title
                     .toLowerCase()
                     .includes(search.toLowerCase()) ||
-                  movie.overview.toLowerCase().includes(search.toLowerCase())
+                  movie.overview
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
                 );
               })
               .map((movie, index) => {
                 return (
-                  <tr className="border-b-2" key={index}>
-                    <td className="flex items-center px-6 py-4">
+                  <tr
+                    key={index}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="flex items-center gap-6 px-6 py-4">
                       <img
-                        className="h-[6rem] w-auto"
+                        className="h-20 rounded-lg shadow"
                         src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
                         alt={movie.original_title}
                       />
-                      <div className="mx-10">{movie.original_title}</div>
+                      <div className="font-semibold">
+                        {movie.original_title}
+                      </div>
                     </td>
-                    <td>{movie.vote_average}</td>
-                    <td>{movie.popularity}</td>
-                    <td>{genreids[movie.genre_ids[0]]}</td>
-                    <td>
+
+                    <td className="text-center font-medium">
+                      ⭐ {movie.vote_average}
+                    </td>
+
+                    <td className="text-center">{movie.popularity}</td>
+
+                    <td className="text-center">
+                      {genreids[movie.genre_ids[0]]}
+                    </td>
+
+                    <td className="text-center">
                       <button
                         onClick={() => handleRemoveFromWatchList(movie)}
-                        className="font-bold text-red-800"
+                        className="px-4 py-1 bg-red-500 text-white 
+                        rounded-lg hover:bg-red-600 transition"
                       >
                         Delete
                       </button>
