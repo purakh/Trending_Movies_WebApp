@@ -1,16 +1,34 @@
 import "font-awesome/css/font-awesome.min.css";
 import React from "react";
 
-function Pagination({handlePrev, handleNext, page}) {
+function Pagination({ handlePrev, handleNext, page }) {
   return (
-    <div className="bg-gray-400 p-2 m-4 flex justify-center items-center">
-      <div onClick={handlePrev} className="px-8 hover:cursor-pointer">
+    <div className="flex justify-center items-center gap-6 mt-6">
+      
+      <button
+        onClick={handlePrev}
+        className="flex items-center justify-center w-10 h-10 
+        rounded-full bg-gray-200 hover:bg-gray-300 
+        transition duration-300 shadow-sm"
+      >
         <i className="fa fa-chevron-left"></i>
+      </button>
+
+      {/* Page Number */}
+      <div className="px-5 py-2 rounded-lg bg-gray-900/90 backdrop-blur text-white font-semibold shadow-lg">
+        {page}
       </div>
-      <div className="font-bold">{page}</div>
-      <div onClick={handleNext} className="px-8 hover:cursor-pointer">
+
+      {/* Next Button */}
+      <button
+        onClick={handleNext}
+        className="flex items-center justify-center w-10 h-10 
+        rounded-full bg-gray-200 hover:bg-gray-300 
+        transition duration-300 shadow-sm"
+      >
         <i className="fa fa-chevron-right"></i>
-      </div>
+      </button>
+
     </div>
   );
 }
